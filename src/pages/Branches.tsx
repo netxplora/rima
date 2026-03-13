@@ -6,9 +6,6 @@ import { MapPin, Phone, Clock, Search, Map as MapIcon, Navigation, Loader2 } fro
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
 interface Branch {
     id: string;
     name: string;
@@ -21,37 +18,70 @@ interface Branch {
     state: string | null;
 }
 
+const staticBranches: Branch[] = [
+    {
+        id: "1",
+        name: "Head Office / Main Branch",
+        address: "No. 3 Evo Crescent, GRA Phase 2",
+        city: "Port Harcourt",
+        state: "Rivers",
+        phone: "+234 800 000 0000",
+        opening_hours: "Mon - Fri: 8:00 AM - 4:00 PM",
+        latitude: 4.8241,
+        longitude: 6.9924,
+    },
+    {
+        id: "2",
+        name: "Trans Amadi Branch",
+        address: "14 Trans Amadi Industrial Layout",
+        city: "Port Harcourt",
+        state: "Rivers",
+        phone: "+234 800 000 0001",
+        opening_hours: "Mon - Fri: 8:00 AM - 4:00 PM",
+        latitude: 4.8105,
+        longitude: 7.0396,
+    },
+    {
+        id: "3",
+        name: "Rumuola Branch",
+        address: "22 Rumuola Road",
+        city: "Port Harcourt",
+        state: "Rivers",
+        phone: "+234 800 000 0002",
+        opening_hours: "Mon - Fri: 8:00 AM - 4:00 PM",
+        latitude: 4.8468,
+        longitude: 6.9856,
+    },
+    {
+        id: "4",
+        name: "Abuloma Branch",
+        address: "Chief Opuapu Street, Abuloma",
+        city: "Port Harcourt",
+        state: "Rivers",
+        phone: "+234 800 000 0003",
+        opening_hours: "Mon - Fri: 8:00 AM - 4:00 PM",
+        latitude: 4.7733,
+        longitude: 7.0321,
+    },
+    {
+        id: "5",
+        name: "Choba Branch",
+        address: "East West Road, Near UniPort",
+        city: "Choba",
+        state: "Rivers",
+        phone: "+234 800 000 0004",
+        opening_hours: "Mon - Fri: 8:00 AM - 4:00 PM",
+        latitude: 4.8941,
+        longitude: 6.8953,
+    }
+];
+
 export default function Branches() {
-    const [branches, setBranches] = useState<Branch[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [activeBranchId, setActiveBranchId] = useState<string | null>(null);
+    const [branches] = useState<Branch[]>(staticBranches);
+    const [loading] = useState(false);
+    const [activeBranchId, setActiveBranchId] = useState<string | null>("1");
     const [searchQuery, setSearchQuery] = useState("");
 
-    const fetchBranches = async () => {
-        try {
-            const response = await fetch(`${SUPABASE_URL}/rest/v1/branches?is_active=eq.true&order=name.asc`, {
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`,
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setBranches(data);
-                // Set head office as default if found
-                const headOffice = data.find((b: { is_headquarters: boolean, id: string }) => b.is_headquarters);
-                if (headOffice) setActiveBranchId(headOffice.id);
-            }
-        } catch (error) {
-            console.error("Error fetching branches:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchBranches();
-    }, []);
 
     const activeBranch = branches.find(b => b.id === activeBranchId);
 
